@@ -10,7 +10,9 @@
   <!-- Add other dependencies-->
   <depend>std_msgs</depend>
   <depend>rclpy</depend>
-
+  <depend>numpy</depend>
+  <depend>cv2</depend>
+    
   <export>
     <build_type>ament_python</build_type>
   </export>
