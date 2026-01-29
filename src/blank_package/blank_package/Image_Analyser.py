@@ -53,9 +53,6 @@ class ImageSaver(Node):
         self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame)
         self.counter += 1
 
-<<<<<<< HEAD
-    def pattern_analyser(self):
-=======
     def rotate(self):
         if self.frame is None:
             return 
@@ -81,7 +78,6 @@ class ImageSaver(Node):
 
 
     def publish_detection(self):
->>>>>>> 9bd072e623a4a650da717506694d8db5dac7a651
         # LEDPattern is a custom Duckietown Message
         msg = LEDPattern()
 
