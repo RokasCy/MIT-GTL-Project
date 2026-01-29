@@ -52,7 +52,7 @@ class ImageSaver(Node):
         frame = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
         self.frame = frame
 
-        self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame)
+        self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir, self.counter)
         self.counter += 1
 
         #test part

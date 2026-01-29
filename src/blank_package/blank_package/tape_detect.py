@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+from numpy.ma.core import count
+
 
 def get_postion(cx, cy, frame):
     imgh, imgw = frame.shape[0], frame.shape[1]
@@ -34,7 +36,7 @@ def draw_borders(frame):
     cv2.line(frame, (0, bh), (imgw, bh), (0, 0, 255), 2)
     cv2.line(frame, (0, bh*2), (imgw, bh*2), (0, 0, 255), 2)
 
-def detect_parking(frame):
+def detect_parking(frame, dir, count):
     # Hue Saturation Value
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -68,7 +70,9 @@ def detect_parking(frame):
     cx = x + w // 2
     cy = y + h // 2
 
-    print(get_postion(cx, cy, frame))
+    #print(get_postion(cx, cy, frame))
+    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    cv2.imwrite(f'{dir}/{count}.jpg', frame)
 
     return (True, cx, cy)
 
