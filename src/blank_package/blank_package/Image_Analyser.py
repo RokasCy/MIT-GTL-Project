@@ -39,7 +39,7 @@ class ImageSaver(Node):
         self.counter = 0
 
     def save_image(self, msg):
-        if self.counter % 5 != 0:
+        if self.counter % 15 != 0:
             self.counter += 1
             return
 
@@ -51,6 +51,8 @@ class ImageSaver(Node):
 
         self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir, self.counter)
         self.counter += 1
+
+        self.get_clock().sleep_for(Duration(seconds=0.5))
 
         #test part
         if self.frame is None:
@@ -66,9 +68,9 @@ class ImageSaver(Node):
         if abs(error) < dead_zone:
             self.move_forward()
         elif error > 0:
-            self.turn_right(0.3)
+            self.turn_right(0.1)
         elif error < 0:
-            self.turn_left(0.3)
+            self.turn_left(0.1)
 
     '''def rotate(self):
         if self.frame is None:
@@ -84,7 +86,7 @@ class ImageSaver(Node):
         if abs(error) < dead_zone:
             self.move_forward()
         elif error > 0:
-            self.turn_right(0.3)
+            self.turn_right(1)
         elif error < 0:
             self.turn_left(0.3)'''
         
@@ -114,7 +116,9 @@ class ImageSaver(Node):
         self.run_wheels('stop_callback', 0.0, 0.0)
     def move_forward(self):
         self.get_logger().info("Moving forward")
-        self.run_wheels('forward_callback', 0.5, 0.5)
+        self.run_wheels('forward_callback', 0.4, 0.4)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
 
     def stop_movement(self):
         self.get_logger().info("Stopping movement")
