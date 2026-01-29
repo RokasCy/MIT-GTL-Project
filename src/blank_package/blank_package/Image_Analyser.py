@@ -26,10 +26,10 @@ class ImageSaver(Node):
         self.create_subscription(CompressedImage, f'/{self.vehicle_name}/image/compressed', self.save_image, 10)
 
         self.publisher_led = self.create_publisher(LEDPattern, f'/{self.vehicle_name}/led_pattern', 1)
-        self.timer_led = self.create_timer(0.1, self.publish_detection)
+        self.timer_led = self.create_timer(0.5, self.publish_detection)
 
         self.wheels_pub = self.create_publisher(WheelsCmdStamped, f'/{self.vehicle_name}/wheels_cmd', 10)
-        self.timer_rotate  = self.create_timer(0.1, self.rotate)
+        #self.timer_rotate  = self.create_timer(0.1, self.rotate)
 
         self.spotted_parking = False
         self.obj_x, self.obj_y = 0, 0
@@ -55,7 +55,25 @@ class ImageSaver(Node):
         self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame)
         self.counter += 1
 
-    def rotate(self):
+        #test part
+        if self.frame is None:
+            return
+
+        frame_center_x = self.frame.shape[1] // 2
+        frame_center_y = self.frame.shape[0] // 2
+
+        error = self.obj_x - frame_center_x
+        rotation_speed = 0
+
+        dead_zone = 10  # pixels
+        if abs(error) < dead_zone:
+            self.move_forward()
+        elif error > 0:
+            self.turn_right(0.3)
+        elif error < 0:
+            self.turn_left(0.3)
+
+    '''def rotate(self):
         if self.frame is None:
             return 
         
@@ -71,7 +89,7 @@ class ImageSaver(Node):
         elif error > 0:
             self.turn_right(0.3)
         elif error < 0:
-            self.turn_left(0.3)
+            self.turn_left(0.3)'''
         
 
 
@@ -88,14 +106,14 @@ class ImageSaver(Node):
     def turn_left(self,speed):
         self.get_logger().info("Turning left")
         self.run_wheels('right_callback', 0.0, speed)
-        self.get_clock().sleep_for(Duration(seconds=1))
+        self.get_clock().sleep_for(Duration(seconds=0.3))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
 
     def turn_right(self,speed):
         self.get_logger().info("Turning right")
         self.run_wheels('right_callback', speed, 0.0)
-        self.get_clock().sleep_for(Duration(seconds=1))
+        self.get_clock().sleep_for(Duration(seconds=0.3))
         self.run_wheels('stop_callback', 0.0, 0.0)
     def move_forward(self):
         self.get_logger().info("Moving forward")
