@@ -39,7 +39,7 @@ class ImageSaver(Node):
         self.counter = 0
 
     def save_image(self, msg):
-        if self.counter % 60 != 0:
+        if self.counter % 15 != 0:
             self.counter += 1
             return
 
@@ -52,7 +52,7 @@ class ImageSaver(Node):
         self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir, self.counter)
         self.counter += 1
 
-        self.get_clock().sleep_for(Duration(seconds=3))
+        self.get_clock().sleep_for(Duration(seconds=0.5))
 
         #test part
         if self.frame is None:
