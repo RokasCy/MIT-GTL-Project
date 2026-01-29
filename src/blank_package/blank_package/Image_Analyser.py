@@ -8,9 +8,11 @@ import numpy as np
 from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage
 
-from duckietown_msgs.msg import LEDPattern
-from std_msgs.msg import ColorRGBA
+from duckietown_msgs.msg import LEDPattern, WheelsCmdStamped
+from std_msgs.msg import String, ColorRGBA, Header
 from geometry_msgs.msg import Twist
+from rclpy.time import Duration
+
 
 
 class ImageSaver(Node):
@@ -26,7 +28,7 @@ class ImageSaver(Node):
         self.publisher_led = self.create_publisher(LEDPattern, f'/{self.vehicle_name}/led_pattern', 1)
         self.timer_led = self.create_timer(1, self.publish_detection)
 
-        self.cmd_vel_pub = self.create_publisher(Twist, f'/{self.vehicle_name}/cmd_vel', 1)
+        self.wheels_pub = self.create_publisher(WheelsCmdStamped, f'/{self.vehicle_name}/wheels_cmd', 10)
         self.timer_rotate  = self.create_timer(0.1, self.rotate)
 
         self.spotted_parking = False
@@ -65,15 +67,43 @@ class ImageSaver(Node):
 
         dead_zone = 10  # pixels
         if abs(error) < dead_zone:
-            rotation_speed = 0 
+            self.move_forward()
         elif error > 0:
-            rotation_speed = 0.3
-        if error < 0:
-            rotation_speed = -0.3
+            self.turn_right(0.3)
+        elif error < 0:
+            self.turn_left(0.3)
         
-        cmd = Twist()
-        cmd.angular.z = rotation_speed 
-        self.cmd_vel_pub.publish(cmd) 
+
+
+    def run_wheels(self, frame_id, vel_left, vel_right):
+        wheel_msg = WheelsCmdStamped()
+        header = Header()
+        header.stamp = self.get_clock().now().to_msg()
+        header.frame_id = frame_id
+        wheel_msg.header = header
+        wheel_msg.vel_left = vel_left
+        wheel_msg.vel_right = vel_right
+        self.wheels_pub.publish(wheel_msg)
+
+    def turn_left(self,speed):
+        self.get_logger().info("Turning left")
+        self.run_wheels('right_callback', 0.0, speed)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
+
+
+    def turn_right(self,speed):
+        self.get_logger().info("Turning right")
+        self.run_wheels('right_callback', speed, 0.0)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
+    def move_forward(self):
+        self.get_logger().info("Moving forward")
+        self.run_wheels('forward_callback', 0.5, 0.5)
+
+    def stop_movement(self):
+        self.get_logger().info("Stopping movement")
+        self.run_wheels('stop_callback', 0.0, 0.0)
 
 
 
