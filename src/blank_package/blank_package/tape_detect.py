@@ -56,9 +56,6 @@ def detect_parking(frame):
     red_mask = cv2.morphologyEx(red_mask, cv2.MORPH_CLOSE, kernel)
 
     draw_borders(frame)
-    cv2.imshow("frame", frame)
-    cv2.imshow("mask", red_mask)
-    cv2.waitKey(1)
 
     #finding contours
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -72,23 +69,6 @@ def detect_parking(frame):
     cy = y + h // 2
 
     print(get_postion(cx, cy, frame))
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    cv2.imshow("frame", frame)
-    cv2.waitKey(1)
-    
+
     return (True, cx, cy)
 
-
-'''def detect_road(frame):
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-    lower_black = np.array([0, 0, 0])
-    upper_black = np.array([179, 255, 50])
-
-    black_mask = cv2.inRange(hsv, lower_black, upper_black)
-
-    kernel = np.ones((5, 5), np.uint8)
-    black_mask = cv2.morphologyEx(black_mask, cv2.MORPH_OPEN, kernel)
-    black_mask = cv2.morphologyEx(black_mask, cv2.MORPH_CLOSE, kernel)
-
-'''
