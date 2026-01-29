@@ -65,7 +65,7 @@ class ImageSaver(Node):
         error = self.obj_x - frame_center_x
         rotation_speed = 0
 
-        dead_zone = 10  # pixels
+        dead_zone = 50  # pixels
         if abs(error) < dead_zone:
             self.move_forward()
         elif error > 0:
