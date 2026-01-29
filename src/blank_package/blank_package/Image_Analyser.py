@@ -42,9 +42,6 @@ class ImageSaver(Node):
         if self.counter % 5 != 0:
             self.counter += 1
             return
-        with open(self.output_dir + str(self.counter) + '.jpg', 'wb') as f:
-            self.get_logger().info(f'Saving image {self.counter}')
-            f.write(msg.data)
 
         #convert to 1D numpy array
         np_arr = np.frombuffer(msg.data, np.uint8)
