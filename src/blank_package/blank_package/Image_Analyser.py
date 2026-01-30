@@ -85,6 +85,8 @@ class ImageSaver(Node):
                     self.turn_right(0.7, 0.1)
                     self.previous_move = 'right'
 
+                return
+
 
             if not self.spotted_parking:
                 self.turn_left(1.0,0.5)
