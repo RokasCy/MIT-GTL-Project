@@ -61,7 +61,7 @@ class ImageSaver(Node):
             self.get_clock().sleep_for(Duration(seconds=0.5))
 
             # test part
-            if self.end_amount_of_frames > 3 and self.going_to_parking:
+            if self.end_amount_of_frames > 5 and self.going_to_parking:
                 self.reached_parking = True
                 self.stop_movement()
                 self.get_logger().info("Reached parking spot!")
@@ -130,9 +130,8 @@ class ImageSaver(Node):
         # LEDPattern is a custom Duckietown Message
         msg = LEDPattern()
 
-        if self.spotted_parking:
-            pattern = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
-        elif self.reached_parking:
+
+        if self.reached_parking:
             flash = False
             for i in range(3):
                 if flash == False: 
@@ -146,6 +145,8 @@ class ImageSaver(Node):
                     flash = False
                     return
             pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
+        elif self.spotted_parking:
+            pattern = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
         else:
             pattern = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1.0)
 
