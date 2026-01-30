@@ -76,10 +76,10 @@ class ImageSaver(Node):
 
             if self.previous_status and not self.spotted_parking:
                 self.get_logger().info("Lost sight of parking spot, searching...")
-                if self.previous_status == 'right':
+                if self.previous_move == 'right':
                     self.turn_left(0.7, 0.1)
                     self.previous_move = 'left'
-                elif self.previous_status == 'left':
+                elif self.previous_move == 'left':
                     self.turn_right(0.7, 0.1)
                     self.previous_move = 'right'
                 self.previous_status = self.spotted_parking
