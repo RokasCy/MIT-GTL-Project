@@ -41,6 +41,7 @@ class ImageSaver(Node):
         self.reached_parking = False
 
         self.end_amount_of_frames = 0
+        self.flash = False
 
     def save_image(self, msg):
         if not self.reached_parking:
@@ -133,21 +134,19 @@ class ImageSaver(Node):
 
         if self.reached_parking:
             self.get_logger().info("Reached parking/trying to switch lights")
-            flash = False
-            for i in range(3):
-                if flash == False:
-                    self.get_logger().info("Trying to switch lights to white")
-                    pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
-                    self.get_clock().sleep_for(Duration(seconds=0.1))
-                    flash = True
-                    return
-                elif flash == True:
-                    self.get_logger().info("Trying to switch lights to blue")
-                    pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
-                    self.get_clock().sleep_for(Duration(seconds=0.1))
-                    flash = False
-                    return
-            pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
+            if self.flash == False:
+             self.get_logger().info("Trying to switch lights to white")
+             pattern = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
+             self.get_clock().sleep_for(Duration(seconds=0.1))
+             flash = True
+             return
+            if self.flash == True:
+             self.get_logger().info("Trying to switch lights to blue")
+             pattern = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1.0)
+             self.get_clock().sleep_for(Duration(seconds=0.1))
+             flash = False
+             return
+
         elif self.spotted_parking:
             pattern = ColorRGBA(r=0.0, g=1.0, b=0.0, a=1.0)
         else:
