@@ -87,8 +87,7 @@ class ImageSaver(Node):
 
 
             if not self.spotted_parking:
-                self.turn_left(1.0,0.5)
-                self.turn_right(-1.0, -0.5)
+                self.roam()
                 if self.going_to_parking:
                     self.end_amount_of_frames += 1
             elif self.spotted_parking:
@@ -147,6 +146,12 @@ class ImageSaver(Node):
     def move_forward(self):
         self.get_logger().info("Moving forward")
         self.run_wheels('forward_callback', 0.4, 0.4)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
+
+    def roam(self):
+        self.get_logger().info("Moving forward")
+        self.run_wheels('forward_callback', -0.4, 0.4)
         self.get_clock().sleep_for(Duration(seconds=1))
         self.run_wheels('stop_callback', 0.0, 0.0)
 
