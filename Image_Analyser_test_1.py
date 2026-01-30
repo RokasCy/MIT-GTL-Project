@@ -59,7 +59,7 @@ class ImageSaver(Node):
             return
 
         if not self.spotted_parking:
-            self.turn_left(1)
+            self.turn_left(1.0)
         elif self.spotted_parking:
 
             frame_center_x = self.frame.shape[1] // 2

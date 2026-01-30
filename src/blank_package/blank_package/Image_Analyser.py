@@ -71,7 +71,7 @@ class ImageSaver(Node):
                 return
 
             if not self.spotted_parking:
-                self.turn_left(1)
+                self.turn_left(1.0)
                 if self.going_to_parking:
                     self.end_amount_of_frames += 1
             elif self.spotted_parking:
