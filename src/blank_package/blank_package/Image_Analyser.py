@@ -37,9 +37,6 @@ class ImageSaver(Node):
 
         self.counter = 0
 
-        self.action_timer = None
-        self.action_end_time = None
-
     def save_image(self, msg):
         if self.counter % 15 != 0:
             self.counter += 1
@@ -54,11 +51,10 @@ class ImageSaver(Node):
         self.spotted_parking, self.obj_x, self.obj_y = tape_detect.detect_parking(frame, self.output_dir, self.counter)
         self.counter += 1
 
-        # self.get_clock().sleep_for(Duration(seconds=0.5))
+        self.get_clock().sleep_for(Duration(seconds=0.5))
 
         # test part
-
-    '''        if self.frame is None:
+        if self.frame is None:
             return
 
         if not self.spotted_parking:
@@ -77,26 +73,6 @@ class ImageSaver(Node):
             elif error > 0:
                 self.turn_right(0.1)
             elif error < 0:
-                self.turn_left(0.1)'''
-
-    def process_movement(self):
-
-        if self.frame is None:
-            return
-
-        if not self.spotted_parking:
-            self.turn_left(0.1)
-        else:
-
-            frame_center_x = self.frame.shape[1] // 2
-            error = self.obj_x - frame_center_x
-            dead_zone = 50  # pixels
-
-            if abs(error) < dead_zone:
-                self.move_forward()
-            elif error > 0:
-                self.turn_right(0.1)
-            else:
                 self.turn_left(0.1)
 
     def run_wheels(self, frame_id, vel_left, vel_right):
@@ -111,32 +87,21 @@ class ImageSaver(Node):
 
     def turn_left(self, speed):
         self.get_logger().info("Turning left")
-        self.run_wheels('left_callback', 0.0, speed)
-        # Schedule stop after 1 second without blocking
-        self.action_end_time = self.get_clock().now() + Duration(seconds=1)
-        if self.action_timer is None:
-            self.action_timer = self.create_timer(0.05, self.check_action_complete)
+        self.run_wheels('right_callback', 0.0, speed)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
 
     def turn_right(self, speed):
         self.get_logger().info("Turning right")
         self.run_wheels('right_callback', speed, 0.0)
-        self.action_end_time = self.get_clock().now() + Duration(seconds=1)
-        if self.action_timer is None:
-            self.action_timer = self.create_timer(0.05, self.check_action_complete)
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
 
     def move_forward(self):
         self.get_logger().info("Moving forward")
         self.run_wheels('forward_callback', 0.4, 0.4)
-        self.action_end_time = self.get_clock().now() + Duration(seconds=1)
-        if self.action_timer is None:
-            self.action_timer = self.create_timer(0.05, self.check_action_complete)
-
-    def check_action_complete(self):
-        if self.action_end_time and self.get_clock().now() >= self.action_end_time:
-            self.stop_movement()
-            self.action_timer.destroy()
-            self.action_timer = None
-            self.action_end_time = None
+        self.get_clock().sleep_for(Duration(seconds=1))
+        self.run_wheels('stop_callback', 0.0, 0.0)
 
     def stop_movement(self):
         self.get_logger().info("Stopping movement")
