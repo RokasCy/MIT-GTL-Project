@@ -43,6 +43,9 @@ class ImageSaver(Node):
         self.end_amount_of_frames = 0
         self.flash = False
 
+        self.previous_move = None
+        self.previous_status = None
+
     def save_image(self, msg):
         if not self.reached_parking:
             if self.counter % 15 != 0:
@@ -71,6 +74,18 @@ class ImageSaver(Node):
             if self.frame is None:
                 return
 
+            if self.previous_status and not self.spotted_parking:
+                self.get_logger().info("Lost sight of parking spot, searching...")
+                self.going_to_parking = False
+                self.end_amount_of_frames = 0
+                if self.previous_status == 'right':
+                    self.turn_left(0.7, 0.1)
+                    self.previous_move = 'left'
+                elif self.previous_status == 'left':
+                    self.turn_right(0.7, 0.1)
+                    self.previous_move = 'right'
+
+
             if not self.spotted_parking:
                 self.turn_left(1.0,0.5)
                 if self.going_to_parking:
@@ -87,13 +102,20 @@ class ImageSaver(Node):
                 error = self.obj_x - frame_center_x
                 rotation_speed = 0
 
+
+
                 dead_zone = 50  # pixels
                 if abs(error) < dead_zone:
                     self.move_forward()
+                    self.previous_move = 'forward'
                 elif error > 0:
                     self.turn_right(0.9,0.1)
+                    self.previous_move = 'right'
                 elif error < 0:
                     self.turn_left(0.9,0.1)
+                    self.previous_move = 'left'
+        self.previous_status = self.spotted_parking
+
 
     def run_wheels(self, frame_id, vel_left, vel_right):
         wheel_msg = WheelsCmdStamped()
