@@ -83,7 +83,7 @@ class ImageSaver(Node):
                     self.turn_right(0.7, 0.1)
                     self.previous_move = 'right'
                 self.previous_status = self.spotted_parking
-                return
+
 
 
             if not self.spotted_parking:
